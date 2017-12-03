@@ -17,8 +17,22 @@ const spreadsheet = [
 	[1763, 464, 182, 1932, 1209, 640, 545, 931, 1979, 197, 1774, 174, 2074, 1800, 939, 161]
 ];
 
-const lineDiff = line => Math.max(...line) - Math.min(...line);
+const firstChecksum = line => Math.max(...line) - Math.min(...line);
 
-const checksum = spreadsheet => spreadsheet.map(lineDiff).reduce((acc, curr) => acc + curr);
+const isDivisorOrMultiple = a => b => Math.max(a, b) % Math.min(a, b) === 0;
 
-console.log(checksum(spreadsheet));
+const secondChecksum = line => {
+	const head = line[0];
+	const tail = line.slice(1);
+	const res = tail.find(isDivisorOrMultiple(head));
+
+	return res ? Math.max(res, head) / Math.min(res, head) : secondChecksum(tail);
+};
+
+const solveBy = fn => spreadsheet => spreadsheet.map(fn).reduce((acc, curr) => acc + curr);
+
+const first = solveBy(firstChecksum);
+const second = solveBy(secondChecksum);
+
+console.log(first(spreadsheet));
+console.log(second(spreadsheet));
